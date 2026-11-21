@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact · Bian Chuqi</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="mascots/coffee-fairy/coffee-fairy.js?v=11-touch"></script>
+  <style>
+    .contact-page {
+      max-width: 1440px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+      grid-template-areas: "title fairy" "links fairy";
+      column-gap: clamp(1.5rem, 4vw, 4rem);
+    }
+    .contact-page h1 { grid-area: title; }
+    .contact-page .contact-list { grid-area: links; margin: 0; }
+    .contact-page coffee-fairy { grid-area: fairy; align-self: center; justify-self: center; --fairy-width: 680px; }
+    @media (max-width: 960px) {
+      .contact-page { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "fairy" "links"; }
+      .contact-page h1 { margin-bottom: .25em; }
+      .contact-page coffee-fairy { --fairy-width: 420px; margin-block: .25rem 1.25rem; }
+    }
+  </style>
 </head>
 <body class="inner-page">
   <a class="skip" href="#main">Skip to content</a>
@@ -12,6 +30,7 @@
   <main id="main">
     <section class="details-page contact-page" aria-labelledby="page-title">
       <h1 id="page-title">Contact</h1>
+      <coffee-fairy></coffee-fairy>
       <dl class="contact-list">
         <div><dt>Email</dt><dd><a href="mailto:e1356438@u.nus.edu">e1356438@u.nus.edu</a></dd></div>
         <div><dt>Telegram</dt><dd><a href="https://t.me/bcq_0528">@bcq_0528</a></dd></div>
