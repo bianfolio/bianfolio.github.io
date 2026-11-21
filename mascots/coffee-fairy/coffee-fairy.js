@@ -262,7 +262,8 @@
         }
         Object.assign(this.images,await loadArt(Object.keys(lengths)));
       } catch {
-        if (this.phase==='waiting-for-cup') {
+        if (this.phase==='waiting-for-turn') this.showOffer();
+        else if (this.phase==='waiting-for-cup') {
           this.phase='answered';
           this.message.textContent=this.status.textContent='Here you go. Enjoy your coffee!';
           this.resync();
@@ -270,7 +271,8 @@
         return;
       }
       finally { this.preparing=false; }
-      if (this.phase==='waiting-for-cup') this.startServing();
+      if (this.phase==='waiting-for-turn') this.startGreeting();
+      else if (this.phase==='waiting-for-cup') this.startServing();
       else if (this.phase==='offer' || this.phase==='answered') this.draw('speak',1);
       this.schedule();
     }
@@ -279,7 +281,7 @@
     }
     schedule() {
       if (this.raf || !this.isConnected || !this.inView || document.hidden) return;
-      if (this.phase==='offer' || this.phase==='waiting-for-cup' || (this.phase==='drawing' && (!this.desk || stillIdle()))) return;
+      if (this.phase==='offer' || this.phase==='waiting-for-turn' || this.phase==='waiting-for-cup' || (this.phase==='drawing' && (!this.desk || stillIdle()))) return;
       this.raf=requestAnimationFrame(this.tick);
     }
     draw(name,t) {
@@ -505,7 +507,16 @@
       if (this.phase!=='drawing') return;
       this.armed=false; this.keyboard=keyboard; this.mouseVisit=mouse; this.touchVisit=touch;
       this.hit.tabIndex=-1;
-      if (reduce.matches || !this.images?.speak) { this.showOffer(); return; }
+      if (touch && !this.images?.speak) {
+        this.phase='waiting-for-turn';
+        this.stopTick();
+        this.prepare();
+        return;
+      }
+      if (!touch && (reduce.matches || !this.images?.speak)) { this.showOffer(); return; }
+      this.startGreeting();
+    }
+    startGreeting() {
       // Match the current velocity as the artist lifts her pen to greet a visitor.
       this.exitPose=brushPose(this.elapsed);
       const ahead=brushPose(this.elapsed+1);
@@ -523,12 +534,15 @@
         const ease=t*t*(3-2*t);
         this.drawBrush(this.exitPose.map((v,i)=>v+(restPose[i]-v)*ease+
           this.exitVelocity[i]*390*t*(1-t)*(1-t)));
-        if (t===1 || reduce.matches) { this.phase='turning'; this.elapsed=0; }
+        if (t===1 || (reduce.matches && !this.touchVisit)) { this.phase='turning'; this.elapsed=0; }
       } else if (this.phase==='turning') {
         this.elapsed+=delta;
         if(this.stock<1) this.stock=Math.max(this.stock,progress(this.elapsed,0,520));
-        this.play(approach,this.elapsed);
-        if (this.elapsed>=duration(approach) || reduce.matches) this.showOffer();
+        // On tap, turn toward the visitor at exactly the pace of the turn back.
+        const steps=this.touchVisit?retreat:approach;
+        const turnDuration=duration(steps);
+        this.play(steps,this.touchVisit?Math.max(0,turnDuration-this.elapsed):this.elapsed);
+        if (this.elapsed>=turnDuration || (reduce.matches && !this.touchVisit)) this.showOffer();
       } else if (this.phase==='serving') {
         this.elapsed+=delta;
         const still=this.stillService;
@@ -567,7 +581,7 @@
     }
     startServing() {
       this.phase='serving';this.elapsed=0;this.stock=0;this.dialog.hidden=true;
-      // A deliberate tap plays the handoff even when the greeting is shortened.
+      // A deliberate tap plays the full handoff.
       this.stillService=reduce.matches && !this.touchVisit;
       this.status.textContent='She sets down her pen and picks up your coffee.';
       this.drawService(this.stillService?2390:0);
