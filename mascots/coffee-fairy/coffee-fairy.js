@@ -261,9 +261,17 @@
           this.schedule();
         }
         Object.assign(this.images,await loadArt(Object.keys(lengths)));
-      } catch { return; }
+      } catch {
+        if (this.phase==='waiting-for-cup') {
+          this.phase='answered';
+          this.message.textContent=this.status.textContent='Here you go. Enjoy your coffee!';
+          this.resync();
+        }
+        return;
+      }
       finally { this.preparing=false; }
-      if (this.phase==='offer' || this.phase==='answered') this.draw('speak',1);
+      if (this.phase==='waiting-for-cup') this.startServing();
+      else if (this.phase==='offer' || this.phase==='answered') this.draw('speak',1);
       this.schedule();
     }
     stopTick() {
@@ -271,7 +279,7 @@
     }
     schedule() {
       if (this.raf || !this.isConnected || !this.inView || document.hidden) return;
-      if (this.phase==='offer' || (this.phase==='drawing' && (!this.desk || stillIdle()))) return;
+      if (this.phase==='offer' || this.phase==='waiting-for-cup' || (this.phase==='drawing' && (!this.desk || stillIdle()))) return;
       this.raf=requestAnimationFrame(this.tick);
     }
     draw(name,t) {
@@ -523,7 +531,7 @@
         if (this.elapsed>=duration(approach) || reduce.matches) this.showOffer();
       } else if (this.phase==='serving') {
         this.elapsed+=delta;
-        const still=reduce.matches;
+        const still=this.stillService;
         const moment=still?2390:this.elapsed;
         this.drawService(moment);
         if(moment>=2130 && moment<3180 && this.dialog.hidden){
@@ -557,6 +565,14 @@
       if (this.keyboard) this.actions.firstElementChild.focus({preventScroll:true});
       this.checkLeave();
     }
+    startServing() {
+      this.phase='serving';this.elapsed=0;this.stock=0;this.dialog.hidden=true;
+      // A deliberate tap plays the handoff even when the greeting is shortened.
+      this.stillService=reduce.matches && !this.touchVisit;
+      this.status.textContent='She sets down her pen and picks up your coffee.';
+      this.drawService(this.stillService?2390:0);
+      this.resync();
+    }
     answer(choice) {
       if (this.phase!=='offer') return;
       clearTimeout(this.touchTimer);
@@ -564,10 +580,13 @@
       const words=choice==='yes' ? 'Here you go. Enjoy your coffee!' : 'Of course. I’ll be here.';
       this.message.textContent=words; this.status.textContent=words;
       this.actions.hidden=true; this.hit.setAttribute('aria-expanded','false');
-      if(choice==='yes' && this.images?.speak && this.desk) {
-        this.phase='serving';this.stock=0;this.dialog.hidden=true;
-        this.status.textContent='She sets down her pen and picks up your coffee.';
-        this.drawService(reduce.matches?2390:0);
+      if(choice==='yes') {
+        if (this.images?.speak && this.desk) this.startServing();
+        else if (this.touchVisit) {
+          this.phase='waiting-for-cup';
+          this.message.textContent=this.status.textContent='One moment…';
+          this.prepare();
+        }
       }
       this.dispatchEvent(new CustomEvent('coffee-response',{detail:{answer:choice},bubbles:true,composed:true}));
       this.resync();
