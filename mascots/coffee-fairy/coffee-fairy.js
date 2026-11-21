@@ -564,7 +564,7 @@
       } else if (this.phase==='returning') {
         this.elapsed+=delta;
         this.play(retreat,this.elapsed);
-        if (this.elapsed>=duration(retreat) || reduce.matches || !this.images?.speak) {
+        if (this.elapsed>=duration(retreat) || (reduce.matches && !this.touchVisit) || !this.images?.speak) {
           this.finishVisit();
         }
       }
