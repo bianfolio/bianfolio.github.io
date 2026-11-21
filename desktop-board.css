@@ -130,6 +130,10 @@
     padding: 0;
   }
   .home .intro-copy { position: absolute; left: 7.5%; top: 20.6cqw; }
+  .home .profile-actions a {
+    border-bottom-color: transparent;
+    background: linear-gradient(#947c58, #947c58) left bottom / calc(100% - .45em) 1px no-repeat;
+  }
   .home .silk-portrait { clip-path: url(#desktop-portrait-cut); }
   .home .silk-portrait img {
     position: absolute;
@@ -245,6 +249,7 @@
     align-content: center;
   }
   .home #professional-practice { margin-top: clamp(4rem, 25vw, 7rem); }
+  .home .history-row > h2 + div { align-content: start; }
   .home #professional-practice .atelier-entry { max-width: 52.8vw; }
   .home .history-row h2 { font-size: 1.75rem; }
   .home .history-row h3 { font-size: clamp(.9375rem, 4vw, 1.0625rem); line-height: 1.13; }
