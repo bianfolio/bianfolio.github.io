@@ -4,19 +4,18 @@
   works.dataset.motion = 'unroll';
   const motionParam = new URLSearchParams(location.search).get('motion');
   const motionKey = 'bian-portfolio.project-motion';
-  let fullMotion = motionParam === 'full';
+  // A tap starts the project animation even on a first visit to this site.
+  let projectMotion = motionParam === 'system' ? 'system' : 'full';
   try {
-    if (fullMotion) {
-      localStorage.setItem(motionKey, 'full');
-    } else if (motionParam === 'system') {
-      localStorage.removeItem(motionKey);
-    } else {
-      fullMotion = localStorage.getItem(motionKey) === 'full';
+    if (motionParam === 'full' || motionParam === 'system') {
+      localStorage.setItem(motionKey, motionParam);
+    } else if (localStorage.getItem(motionKey) === 'system') {
+      projectMotion = 'system';
     }
   } catch {
-    // A full-motion link still works when browser storage is unavailable.
+    // The current visit also works when browser storage is unavailable.
   }
-  if (fullMotion) works.dataset.projectMotion = 'full';
+  works.dataset.projectMotion = projectMotion;
   const board = works.querySelector('.board-works');
   const desktopView = board.getAttribute('viewBox');
   const mobile = matchMedia('(max-width: 760px)');
