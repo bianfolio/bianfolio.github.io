@@ -58,17 +58,17 @@
   const extended=gripAt(offered,.12,1.18);
   const serviceEnd=4780;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  let loading;
-  function loadArt() {
-    if (!loading) {
-      loading = Promise.all(['rest', 'desk', 'brush-hand','serving-props', ...Object.keys(lengths)].map(name => new Promise((resolve,reject) => {
-        const img = new Image();
-        img.onload = () => resolve([name,img]);
-        img.onerror = () => reject(new Error('Missing fairy asset: ' + name));
-        img.src = assetURL(name);
-      }))).then(Object.fromEntries).catch(error => { loading = null; throw error; });
-    }
-    return loading;
+  const touchScreen = matchMedia('(hover: none) and (pointer: coarse)');
+  const stillIdle = () => reduce.matches && !touchScreen.matches;
+  const invitation = "You’ve been working hard. Would you like a cup of coffee?";
+  const silkURL = new URL('assets/silk.svg?v=4',scriptURL).href;
+  function loadArt(names) {
+    return Promise.all(names.map(name => new Promise((resolve,reject) => {
+      const img = new Image();
+      img.onload = () => resolve([name,img]);
+      img.onerror = () => reject(new Error('Missing fairy asset: ' + name));
+      img.src = assetURL(name);
+    }))).then(Object.fromEntries);
   }
 
   class CoffeeFairy extends HTMLElement {
@@ -81,7 +81,7 @@
           .scene { position:relative; container-type:inline-size; }
           .art { display:block; position:relative; width:100%; aspect-ratio:2/1; }
           canvas,img { display:block; width:100%; height:100%; }
-          .silk { position:absolute; inset:0; pointer-events:none; }
+          .silk { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
           .poster { position:relative; }
           canvas { position:absolute; inset:0; }
           .visit { position:absolute; left:53%; top:20%; width:34%; height:59%; border:0; border-radius:40%; cursor:pointer; appearance:none; background:transparent; -webkit-tap-highlight-color:transparent; }
@@ -95,8 +95,12 @@
           .actions button:first-child { background:#345746; color:#fffdf4; border-color:#345746; }
           .sr { clip-path:inset(50%); position:absolute; height:1px; width:1px; overflow:hidden; }
           [hidden] { display:none!important; }
+          .dialog-slot { display:contents; }
+          .dialog-sizer { display:none; }
           @container (max-width:460px) {
-            .dialog { position:relative; left:auto; bottom:auto; max-width:100%; margin:6px auto 0; border-radius:14px; }
+            .dialog-slot { display:grid; grid-template-columns:minmax(0,1fr); margin-top:6px; }
+            .dialog { position:relative; inset:auto; grid-area:1/1; place-self:start center; max-width:100%; border-radius:14px; }
+            .dialog-sizer { display:block; visibility:hidden; pointer-events:none; }
             .message { font-size:17px; }
             .actions button { min-height:44px; }
           }
@@ -108,14 +112,14 @@
             <canvas width="1330" height="665" aria-hidden="true"></canvas>
             <button type="button" class="visit" aria-label="Say hello to the cloud artist" aria-expanded="false" aria-controls="greeting"></button>
           </div>
-          <div id="greeting" class="dialog" role="group" aria-label="Coffee invitation" hidden>
-            <p class="message"></p>
+          <div class="dialog-slot"><div id="greeting" class="dialog" role="group" aria-label="Coffee invitation" hidden>
+            <p class="message">${invitation}</p>
             <div class="actions"><button type="button" data-answer="yes">Yes, please</button><button type="button" data-answer="later">Maybe later</button></div>
-          </div>
+          </div></div>
           <span class="sr" role="status" aria-live="polite" aria-atomic="true"></span>
         </div>`;
       const find = selector => this.shadowRoot.querySelector(selector);
-      find('.silk').src = new URL('assets/silk.svg?v=4',scriptURL).href;
+      find('.silk').src = silkURL;
       this.poster = find('.poster');
       this.poster.src = assetURL('rest');
       this.canvas = find('canvas');
@@ -126,6 +130,14 @@
       if(this.display)this.display.globalCompositeOperation='copy';
       this.hit = find('.visit');
       this.dialog = find('.dialog');
+      // Reserve the actual wrapped question and button height, including text zoom.
+      const sizer = this.dialog.cloneNode(true);
+      sizer.removeAttribute('id');
+      sizer.hidden=false;
+      sizer.inert=true;
+      sizer.setAttribute('aria-hidden','true');
+      sizer.classList.add('dialog-sizer');
+      this.dialog.after(sizer);
       this.message = find('.message');
       this.actions = find('.actions');
       this.status = find('.sr');
@@ -169,7 +181,7 @@
       this.onKey = event => { if (event.key==='Escape' && this.phase==='offer') this.answer('later'); };
       this.resync = () => { this.stopTick(); this.schedule(); };
       this.onMotion = () => {
-        if (this.phase==='drawing' && reduce.matches) this.drawBrush(restPose);
+        if (this.phase==='drawing' && stillIdle()) this.drawBrush(restPose);
         this.resync();
       };
       this.tick = time => {
@@ -188,7 +200,10 @@
       this.status.textContent='';
       this.observer=new IntersectionObserver(entries => {
         this.inView=entries[entries.length-1].isIntersecting;
-        if (this.inView) this.prepare();
+        if (this.inView) {
+          this.prepare();
+          if (touchScreen.matches) this.prepareSilk();
+        }
         this.resync();
       });
       this.observer.observe(this);
@@ -212,19 +227,42 @@
       document.removeEventListener('visibilitychange',this.resync);
       reduce.removeEventListener('change',this.onMotion);
     }
+    async prepareSilk() {
+      if (this.silkPending || !this.shadowRoot.querySelector('img.silk')) return;
+      this.silkPending=true;
+      try {
+        const response=await fetch(silkURL);
+        if (!response.ok) return;
+        const source=new DOMParser().parseFromString(await response.text(),'image/svg+xml');
+        const svg=source.documentElement;
+        if (!svg.querySelector('path animate')) return;
+        // Inline playback keeps the original morph on the page's SVG timeline on iOS.
+        svg.querySelector('style')?.remove();
+        svg.querySelector('.still')?.remove();
+        svg.setAttribute('class','silk');
+        svg.setAttribute('aria-hidden','true');
+        this.shadowRoot.querySelector('img.silk')?.replaceWith(document.importNode(svg,true));
+      } catch { /* Keep the original image fallback. */ }
+      finally { this.silkPending=false; }
+    }
     async prepare() {
-      try { this.images=await loadArt(); }
-      catch { return; } // The poster and the invitation remain usable if motion assets fail.
-      if (!this.isConnected) return;
-      if (!this.desk) {
-        this.desk=document.createElement('canvas');
-        this.desk.width=1330; this.desk.height=665;
-        const ctx=this.desk.getContext('2d');
-        ctx.drawImage(this.images.rest,0,0);
-        ctx.clearRect(768,306,384,204);
-        ctx.drawImage(this.images.desk,768,306,384,204);
-      }
-      if (this.phase==='drawing') this.drawBrush(reduce.matches?restPose:brushPose(this.elapsed));
+      if (this.preparing || this.images?.speak) return;
+      this.preparing=true;
+      try {
+        if (!this.desk) {
+          this.images=await loadArt(['rest','desk','brush-hand','serving-props']);
+          this.desk=document.createElement('canvas');
+          this.desk.width=1330; this.desk.height=665;
+          const ctx=this.desk.getContext('2d');
+          ctx.drawImage(this.images.rest,0,0);
+          ctx.clearRect(768,306,384,204);
+          ctx.drawImage(this.images.desk,768,306,384,204);
+          if (this.phase==='drawing') this.drawBrush(stillIdle()?restPose:brushPose(this.elapsed));
+          this.schedule();
+        }
+        Object.assign(this.images,await loadArt(Object.keys(lengths)));
+      } catch { return; }
+      finally { this.preparing=false; }
       if (this.phase==='offer' || this.phase==='answered') this.draw('speak',1);
       this.schedule();
     }
@@ -233,11 +271,11 @@
     }
     schedule() {
       if (this.raf || !this.isConnected || !this.inView || document.hidden) return;
-      if (this.phase==='offer' || (this.phase==='drawing' && (!this.images || reduce.matches))) return;
+      if (this.phase==='offer' || (this.phase==='drawing' && (!this.desk || stillIdle()))) return;
       this.raf=requestAnimationFrame(this.tick);
     }
     draw(name,t) {
-      if (!this.images || !this.ctx) return;
+      if (!this.images?.[name] || !this.ctx) return;
       const frame=Math.round(Math.max(0,Math.min(1,t))*(lengths[name]-1));
       if (this.lastFrame===name+frame) return;
       this.lastFrame=name+frame;
@@ -459,7 +497,7 @@
       if (this.phase!=='drawing') return;
       this.armed=false; this.keyboard=keyboard; this.mouseVisit=mouse; this.touchVisit=touch;
       this.hit.tabIndex=-1;
-      if (reduce.matches || !this.images) { this.showOffer(); return; }
+      if (reduce.matches || !this.images?.speak) { this.showOffer(); return; }
       // Match the current velocity as the artist lifts her pen to greet a visitor.
       this.exitPose=brushPose(this.elapsed);
       const ahead=brushPose(this.elapsed+1);
@@ -504,14 +542,14 @@
       } else if (this.phase==='returning') {
         this.elapsed+=delta;
         this.play(retreat,this.elapsed);
-        if (this.elapsed>=duration(retreat) || reduce.matches || !this.images) {
+        if (this.elapsed>=duration(retreat) || reduce.matches || !this.images?.speak) {
           this.finishVisit();
         }
       }
     }
     showOffer() {
       this.phase='offer'; this.elapsed=0;this.stock=1; this.draw('speak',1);
-      const words="You’ve been working hard. Would you like a cup of coffee?";
+      const words=invitation;
       this.message.textContent=words; this.status.textContent=words;
       this.hit.setAttribute('aria-expanded','true');
       this.actions.hidden=false; this.dialog.hidden=false;
@@ -526,7 +564,7 @@
       const words=choice==='yes' ? 'Here you go. Enjoy your coffee!' : 'Of course. I’ll be here.';
       this.message.textContent=words; this.status.textContent=words;
       this.actions.hidden=true; this.hit.setAttribute('aria-expanded','false');
-      if(choice==='yes' && this.images && this.desk) {
+      if(choice==='yes' && this.images?.speak && this.desk) {
         this.phase='serving';this.stock=0;this.dialog.hidden=true;
         this.status.textContent='She sets down her pen and picks up your coffee.';
         this.drawService(reduce.matches?2390:0);
