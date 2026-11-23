@@ -64,6 +64,15 @@
 }
 .project-icon img { position: absolute; inset: 0; backface-visibility: hidden; }
 .icon-back, .project-icon[aria-expanded="true"] .icon-turn { transform: rotateY(180deg); }
+@media (min-width: 761px) {
+  /* Switch painted faces edge-on so the filtered artwork stays single-sided. */
+  .project-icon[data-motif] img { transition: visibility 0s .32s; }
+  .project-icon[data-motif][aria-expanded="true"] .icon-front,
+  .project-icon[data-motif][aria-expanded="false"] .icon-back { visibility: hidden; }
+}
+@media (min-width: 761px) and (prefers-reduced-motion: reduce) {
+  .project-icon[data-motif] img { transition: none; }
+}
 .project-icon:focus-visible { outline: 1px solid #dbbd85; outline-offset: .35cqw; }
 
 /* Unfold each project away from the icon, in the direction of its layout. */
@@ -276,10 +285,14 @@
   .project-icon img { max-width: none; width: var(--art-size); height: var(--art-size); left: var(--art-left); top: var(--art-top); }
   .project-icon[data-term="Y3S1"] {
     --mobile-x: 28.52155%; --mobile-y: 18.11783%;
-    --art-size: 105.4688%; --art-left: -1.9531%; --art-top: -3.9062%;
   }
   .project-icon[data-term="Y2S2"] {
     --mobile-x: 60.04364%; --mobile-y: 50.15931%;
+  }
+  .project-icon[data-motif="apsara"] {
+    --art-size: 105.4688%; --art-left: -1.9531%; --art-top: -3.9062%;
+  }
+  .project-icon[data-motif="deer"] {
     --art-size: 102.2727%; --art-left: -0.4735%; --art-top: -0.9470%;
   }
   .project-icon[data-term="Y2S1"] {
