@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>Where We Retreat, Forests Return · LAD3001</title>
+<link rel="stylesheet" href="project.css"><script defer src="project.js"></script><script defer src="assets/transect.js"></script></head>
+<body id="top"><section id="transect-track" aria-label="Interactive Combined Transects" hidden><div class="stage"><div id="view" aria-label="Six-step reading of the combined transects"><div id="board"></div></div>
+<div class="stage-bar"><span id="status" aria-live="polite"></span><span id="hint">Scroll to follow the drawing ↓</span><nav id="steps-nav" aria-label="Choose a transect step"></nav><button id="show-full" type="button">View full drawing</button></div></div>
+</section><header class="mast"><a href="../index.html#works">← Portfolio</a></header>
+<main><section id="transects" class="station">
+<header class="section-head"><h2 tabindex="-1">Combined Transects</h2><p>Begin with the history of the ridge. Follow the paths down through the sections to the forest platform and the isolated bungalow.</p></header>
+<figure class="final-board"><a href="assets/combined-transects.webp" target="_blank" aria-label="Open the full-resolution combined transects"><img width="4172" height="2947" src="assets/combined-transects.webp" alt="Complete combined transects showing ridge history, connected paths, the outpost and the bungalow"></a><figcaption><div><button id="replay" type="button">Replay</button><a href="#introduction">Project introduction ↓</a></div></figcaption></figure>
+</section>
+<section id="introduction" class="station introduction" aria-labelledby="project-name">
+<div class="intro-copy"><header class="intro-heading"><p class="eyebrow">Kent Ridge, Singapore · LAD3001</p>
+<h1 id="project-name">Where We Retreat,<br>Forests Return</h1></header>
+<div class="intro-prose">
+<p>Where We Retreat, Forests Return reimagines Kent Ridge as a living military heritage landscape, where forest succession, historical memory and everyday campus life shape one another. Although the ridge lies close to the university’s daily activities, its wooded slopes and military remnants remain distant from everyday experience. The project introduces selective access guided by the forest itself: roots, vegetation and terrain determine where paths can pass, where they must pause, and where human presence should give way. Lightweight steel walkways negotiate these conditions, connecting moments of movement, <span class="phrase-ending">observation and encounter.</span></p>
+<p>Along this network, former military bungalows are reactivated as spaces for heritage interpretation, environmental learning and shared activities, while the central outpost becomes a place to witness the evolving relationship between built remains and forest growth. Walking becomes a way of reading the landscape by following its contours, approaching its traces and discovering histories within the vegetation. Here, retreat is a deliberate design gesture: making room for ecological processes while creating meaningful ways for people to return. The forest continues to grow, and the memory of human occupation <span class="phrase-ending">remains present within it.</span></p>
+</div></div>
+<figure class="archive"><img src="assets/south-buona-vista-road-c1925.jpg" width="680" height="430" alt="South Buona Vista Road winding along the open ridge, with buildings on the crest and the sea beyond." loading="lazy"><figcaption><strong>South Buona Vista Road, c. 1925.</strong> Postcard gifted by Margue Hall.</figcaption></figure></section><nav class="station-nav" aria-label="Project stations"><div>
+<a href="#transects">Transects</a><a href="#nodes">Nodes &amp; Connections</a><a href="#forest">Forest Decides</a><a href="#trail">The Trail</a><a href="#traces">Historical Traces</a>
+</div></nav>
+<section id="nodes" class="station">
+<header class="section-head"><div><h2>Nodes &amp; Connections</h2><p>Where can a walk enter the forest? Select a marked location to see its field photograph, then compare the proposed connections.</p></div>
+<dl class="node-legend" aria-label="Map legend">
+<div data-kind="heritage"><dt>A–C</dt><dd>Heritage sites</dd></div>
+<div data-kind="identified"><dt>1–8</dt><dd>Potential intervention points</dd></div>
+<div data-kind="stone"><dt>9–11</dt><dd>Cut-and-fill areas · No entry</dd></div>
+<div data-kind="forest"><dt>12–14</dt><dd>Traces of planting conservation</dd></div>
+</dl></header>
+<div class="nodes-grid"><div><div id="node-map"><img src="assets/nodes-map.webp" alt="Axonometric survey of the campus edge and its potential points of entry" loading="lazy"></div>
+<a href="assets/connections.webp" target="_blank" class="plate-link">Proposed connections ↗</a></div>
+<div class="field-galleries">
+<figure class="field-gallery" data-gallery="heritage" aria-labelledby="heritage-title">
+<figcaption id="heritage-title">Heritage</figcaption>
+<div class="photo-window" tabindex="0" role="group" aria-label="Heritage photographs">
+<div class="field-plate"><img src="assets/node-a.webp" alt="Field photograph at location A" loading="lazy"><span class="photo-badge" aria-hidden="true"></span></div>
+<button class="photo-prev" aria-label="Previous heritage photograph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5l-7 7 7 7"/></svg></button>
+<button class="photo-next" aria-label="Next heritage photograph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5l7 7-7 7"/></svg></button></div>
+<div class="node-switch" role="group" aria-label="Heritage locations"></div>
+</figure>
+<figure class="field-gallery" data-gallery="node" aria-labelledby="node-title">
+<figcaption id="node-title">Nodes</figcaption>
+<div class="photo-window" tabindex="0" role="group" aria-label="Nodes photographs">
+<div class="field-plate"><img src="assets/node-1.webp" alt="Field photograph at location 1" loading="lazy"><span class="photo-badge" aria-hidden="true"></span></div>
+<button class="photo-prev" aria-label="Previous node photograph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5l-7 7 7 7"/></svg></button>
+<button class="photo-next" aria-label="Next node photograph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5l7 7-7 7"/></svg></button></div>
+<div class="node-switch" role="group" aria-label="Nodes locations"></div>
+</figure>
+</div></div>
+</section>
+<section id="forest" class="station">
+<header class="section-head"><h2>Forest Decides</h2><p>The route is provisional. Read four drawings of the same ground to see where a path shifts, remains unbuilt or is returned to the forest.</p></header>
+<div class="forest-grid"><div class="forest-controls"><div id="forest-options"></div><p id="forest-reading" aria-live="polite"></p><a class="plate-link" id="forest-full" href="assets/forest-1.webp" target="_blank">Open drawing and key ↗</a></div><figure><img id="forest-map" src="assets/forest-map-1.webp" alt="Read the Forest — ecological conditions and potential connections" loading="lazy"></figure></div>
+</section>
+<section id="trail" class="station">
+<header class="section-head"><h2>The Trail</h2><p>At the scale of one tree, distance becomes a design decision. Read the protection zone alongside the modular walkway and its changing relationship to the forest floor.</p></header>
+<div class="trail-grid"><figure><a href="assets/tpz.webp" target="_blank"><img src="assets/tpz.webp" alt="TPZ drawing of a tree, its protection zone and approaching visitors" loading="lazy"></a><figcaption>Tree Protection Zone</figcaption></figure><div>
+<figure><a href="assets/trail-section.webp" target="_blank"><img src="assets/trail-section.webp" alt="Enlarged section of the trail showing the open-grid deck, mesh support and elevation options" loading="lazy"></a><figcaption>Enlarged trail section</figcaption></figure>
+<figure><a href="assets/trail-change.webp" target="_blank"><img src="assets/trail-change.webp" alt="Sections showing retained access, clearance and forest reclamation" loading="lazy"></a><figcaption>The trail over time</figcaption></figure></div></div>
+</section>
+<section id="traces" class="station"><header class="section-head"><h2>Historical Traces</h2><p>The walk leads to two traces of Kent Ridge’s military past. At the bungalows, people gather to read the history of the ridge. At the ancillary outpost, a platform brings them close to the ruins while the <span class="phrase-ending">forest grows through them.</span></p></header>
+<div class="plate-grid"><figure id="bungalow"><img loading="lazy" src="assets/programs.webp" alt="Programs and events at the former military bungalows"><figcaption>Bungalows · Programs and events</figcaption></figure>
+<div class="paired-plates"><figure><img loading="lazy" src="assets/bungalow.webp" alt="Section through the bungalows and forest edge"><figcaption>Bungalow–forest interface · 1:20</figcaption></figure>
+<figure id="outpost"><img loading="lazy" src="assets/outpost.webp" alt="Section through the ancillary outpost and viewing platform"><figcaption>Ancillary Outpost · 1:50</figcaption></figure></div></div>
+<div id="encounters" class="sequence"><h3>A Sequence of Encounters</h3>
+<div class="scene-grid"><div><button class="perspective" aria-haspopup="dialog" aria-label="Enter Glimpse"><img id="perspective-image" src="assets/encounter-1.webp" alt="Glimpse" loading="lazy"><span aria-hidden="true">⤢</span></button>
+<div class="scene-caption"><strong id="scene-name">Glimpse</strong><span id="counter">1 / 6</span></div></div>
+<div id="filmstrip" role="group" aria-label="Scroll through the six encounters"></div></div></div></section></main><button type="button" id="return-top" aria-label="Back to top" title="Back to top">
+<img class="lotus-stem" src="assets/lotus-stem.webp" alt=""><img class="lotus-bloom" src="assets/lotus-bloom.webp" alt=""></button><dialog id="immersive" aria-labelledby="immersive-title">
+<div id="scene-viewport"><div id="scene-surface" aria-hidden="true"></div></div>
+<button id="close-scene" aria-label="Close scene">Close ×</button><div class="immersive-caption"><strong id="immersive-title"></strong><span>Drag to look around</span></div></dialog></body></html>
+
