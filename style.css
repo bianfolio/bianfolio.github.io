@@ -1,12 +1,7 @@
 @charset "UTF-8";
-@font-face {
-  font-family: 'Garamond Libre';
-  src: url('assets/fonts/GaramondLibre-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-:root{color-scheme:dark;--paper:#080808;--surface:#080808;--sand:#080808;--ink:#f5f2ed;--muted:#bcbab6;--coffee:#d6d2ca;--gold:#e6c289;--line:#514e49;--red:#e9d9c0;--ochre:#b99060;--serif:"Garamond Libre",Garamond,Georgia,serif;--sans:var(--serif);font-synthesis:none}
+@font-face{font-family:Garamond;src:local("Garamond"),url("assets/fonts/Garamond-Regular.ttf") format("truetype");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Garamond;src:local("Garamond Bold"),url("assets/fonts/Garamond-Bold.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+:root{color-scheme:dark;--paper:#080808;--surface:#080808;--sand:#080808;--ink:#f5f2ed;--muted:#bcbab6;--coffee:#d6d2ca;--gold:#e6c289;--line:#514e49;--red:#e9d9c0;--ochre:#b99060;--serif:Garamond,Georgia,serif;--sans:var(--serif);font-synthesis:none}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:2rem}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.7 var(--sans)}a{color:inherit;text-decoration:none}button{font:inherit}img{display:block;max-width:100%;height:auto}figure{margin:0}h1,h2,h3,p{margin-top:0}h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.06}h1{font-size:clamp(3.5rem,6vw,7rem);letter-spacing:-.04em}h2{font-size:clamp(2.5rem,4vw,4.2rem);letter-spacing:-.035em}h3{font-size:2rem;letter-spacing:-.02em}em{font-weight:400}p{margin-bottom:1.2rem}a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:7px}a:hover{color:var(--red)}
 .header,main>section,main>figure,footer{max-width:1440px;margin-inline:auto}.header{padding:2rem 6%;display:flex;align-items:center;justify-content:space-between;gap:2rem}.identity{font-family:var(--serif);font-size:1.9rem;line-height:1.1;letter-spacing:-.035em}.identity span{display:block;font-family:var(--sans);font-size:.75rem;letter-spacing:.08em;line-height:1.8;margin-top:.4rem}.header nav{display:flex;gap:2rem;font-size:.875rem}.header nav a{position:relative;padding-block:.3rem}.header nav a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:currentColor;transition:width .25s}.header nav a:hover::after{width:100%}.eyebrow,.date{font-family:var(--sans);font-size:.875rem;line-height:1.5;color:var(--muted)}.eyebrow{letter-spacing:.08em}.date{display:block;margin-bottom:.6rem}.skip{position:fixed;top:-5rem;left:1rem;padding:1rem;background:var(--paper);z-index:100}.skip:focus{top:1rem}
 /* Full case study content stays readable and unobstructed. */
